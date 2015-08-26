@@ -1,0 +1,23 @@
+{
+  "name": "massive-migrate",
+  "version": "0.1.0",
+  "description": "Postgres migrations based on massive-js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "postgres",
+    "migration"
+  ],
+  "author": "Alexander Zeitler",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexZeitler/massive-migrate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AlexZeitler/massive-migrate/issues"
+  },
+  "homepage": "https://github.com/AlexZeitler/massive-migrate#readme"
+}
