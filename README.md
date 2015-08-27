@@ -138,11 +138,9 @@ Your database now contains the two tables as well as a table `pgmigrations`:
 
 
 ```
-
 │    id    │  version  │  scriptname  │  dateapplied  │
 ├──────────┼───────────┼──────────────┼───────────────┤
 │  <guid>  │   0.1.0   │   0.1.0-up   │    <date>     │
-
 ```
 
 ## Want to help?
