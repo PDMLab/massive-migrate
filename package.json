@@ -14,12 +14,12 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AlexZeitler/massive-migrate.git"
+    "url": "git+https://github.com/PDMLab/massive-migrate.git"
   },
   "bugs": {
-    "url": "https://github.com/AlexZeitler/massive-migrate/issues"
+    "url": "https://github.com/PDMLab/massive-migrate/issues"
   },
-  "homepage": "https://github.com/AlexZeitler/massive-migrate#readme",
+  "homepage": "https://github.com/PDMLab/massive-migrate#readme",
   "dependencies": {
     "async": "^1.4.2",
     "massive": "2.0.5",
