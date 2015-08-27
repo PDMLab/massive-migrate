@@ -5,9 +5,9 @@ exports.up = function(db, callback) {
         function(cb) {
             db.createsalutationtable(function(err, result){
                 if(err) {
-                    console.log('up error: ', err)
+                    console.log('up error while creating salutation table: ', err)
                 }
-                console.log('created salutation', result);
+                console.log('created salutation table', result);
                 cb()
             });
 
@@ -15,9 +15,9 @@ exports.up = function(db, callback) {
         function(cb) {
             db.createcustomertable(function(err, result) {
                 if(err) {
-                    console.log('up error: ', err)
+                    console.log('up error while creating customer table: ', err)
                 }
-                console.log('created customers', result);
+                console.log('created customer table', result);
                 cb()
             })
         }

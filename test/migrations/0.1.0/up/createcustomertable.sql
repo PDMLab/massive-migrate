@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Customer (
   city VARCHAR(40),
   existingcustomernumber VARCHAR(40),
   salestaxidentificationnumber VARCHAR(14),
-    customersuppliernumber VARCHAR(40),
+  customersuppliernumber VARCHAR(40),
   createdat DATE DEFAULT now()
 );
 END;
