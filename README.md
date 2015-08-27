@@ -43,7 +43,7 @@ The `migrationScript` has to reside below the `0.1.0` folder shown in the the tr
 └── app.js
 ```
 
-As the core idea of [Massive-js]() (on top of which Massive-Migrate is build) is the usage of `.SQL` files, the migrations themselve are written in `.SQL` files as well.
+As the core idea of [Massive-js](https://github.com/robconery/massive-js) (on top of which Massive-Migrate is build) is the usage of `.SQL` files, the migrations themselve are written in `.SQL` files as well.
 
 In our `0.1.0` `up` migration we want to create a table `customer` using the `createcustomertable.sql` file:
 
@@ -78,6 +78,18 @@ CREATE TABLE IF NOT EXISTS salutation (
   createdat DATE DEFAULT now()
 );
 END;
+```
+
+Both `.SQL` files have to be in the `up` folder below your `0.1.0` migration folder:
+
+```
+├── migrations
+│    └── 0.1.0
+│         ├── up
+│         │    ├── createcustomertable.sql
+│         │    └── createsalutationtable.sql
+│         └── 0.1.0-up.js
+└── app.js
 ```
 
 The final piece for our migration is the implementation of the `migrationScript` named `0.1.0-up.js` which gets hooked up for the migration by Massive-Migrate:
