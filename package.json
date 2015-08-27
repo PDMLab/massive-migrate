@@ -10,7 +10,7 @@
     "postgres",
     "migration"
   ],
-  "author": "Alexander Zeitler",
+  "author": "Alexander Zeitler <alexander.zeitler@pdmlab.com>",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
