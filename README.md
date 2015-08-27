@@ -129,6 +129,8 @@ If you run your application which calls the migration, you get this output:
 
 ```bash`
 $ node app.js
+created salutation table
+created customer table
 migration done
 ```
 
