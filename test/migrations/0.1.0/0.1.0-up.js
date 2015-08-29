@@ -7,7 +7,7 @@ exports.up = function(db, callback) {
                 if(err) {
                     console.log('up error while creating salutation table: ', err)
                 }
-                console.log('created salutation table', result);
+                console.log('created salutation table');
                 cb()
             });
 
@@ -17,7 +17,7 @@ exports.up = function(db, callback) {
                 if(err) {
                     console.log('up error while creating customer table: ', err)
                 }
-                console.log('created customer table', result);
+                console.log('created customer table');
                 cb()
             })
         }

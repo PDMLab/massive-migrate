@@ -11,9 +11,6 @@ var database;
 var Migration = function (conn, migrationsDirectory, version, done) {
 
     var self = this;
-    console.log(__dirname);
-    console.log('Migrations directory', migrationsDirectory);
-    console.log(conn);
 
     massive.connect({connectionString: conn, scripts: __dirname + '/lib/db/'}, function (err, db) {
 
@@ -23,10 +20,8 @@ var Migration = function (conn, migrationsDirectory, version, done) {
                 migrationTableExist = true;
             }
         }
-        console.log('migration table exists: ', migrationTableExist);
         if (!migrationTableExist) {
             db.createpgmigrationtable(function (err, res) {
-                console.log(err);
                 database = db;
                 done();
             });
@@ -36,11 +31,9 @@ var Migration = function (conn, migrationsDirectory, version, done) {
     });
 
     self.up = function (script, callback) {
-        console.log('up');
         var upDir = migrationsDirectory + '/' + version + '/up';
         fs.readdir(upDir, function (err, result) {
             temp.mkdir('massive-migrate', function(err, tempDir) {
-                console.log('tempdir', tempDir)
                 async.each(result, function (file, callback) {
                     copyFile(upDir + '/' + file, tempDir + '/' + file, callback)
                 }, function (err) {
@@ -49,7 +42,6 @@ var Migration = function (conn, migrationsDirectory, version, done) {
                             var upscript = require(migrationsDirectory + '/' + version + '/' + script);
                             upscript.up(db, function (err) {
                                 if (!err) {
-                                    console.log('done up');
                                     db.pgmigration.insert({
                                         version: version,
                                         scriptname: script

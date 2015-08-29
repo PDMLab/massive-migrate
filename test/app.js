@@ -6,6 +6,7 @@ var migration = new Migration(conn, __dirname + '/migrations', '0.1.0', function
     migration.up('0.1.0-up', function(err) {
         if(!err) {
             console.log('migration done');
+            process.exit()
         }
     });
 });
