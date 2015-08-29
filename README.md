@@ -20,7 +20,11 @@ var version = '0.1.0';
 var migrationScript = '0.1.0-up';
 
 var migration = new Migration(conn, migrationsDirectory, version, function () {
-    migration.up(migrationScript);
+    migration.up(migrationScript, function(err) {
+        if(!err) {
+        	console.log('migration done');
+        }
+    });
 });
 ```
 

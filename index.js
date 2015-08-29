@@ -35,7 +35,7 @@ var Migration = function (conn, migrationsDirectory, version, done) {
         }
     });
 
-    self.up = function (script) {
+    self.up = function (script, callback) {
         console.log('up');
         var upDir = migrationsDirectory + '/' + version + '/up';
         fs.readdir(upDir, function (err, result) {
@@ -55,10 +55,14 @@ var Migration = function (conn, migrationsDirectory, version, done) {
                                         scriptname: script
                                     }, function (err) {
                                         if (!err) {
-                                            console.log('migration done');
                                             temp.cleanup();
+                                            if(callback) {
+                                                callback()
+                                            }
                                         } else {
-                                            console.log('migration insert error ', err)
+                                            if(callback) {
+                                                callback(err)
+                                            }
                                         }
                                     })
                                 }
