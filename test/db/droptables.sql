@@ -1,0 +1,5 @@
+BEGIN;
+DROP TABLE IF EXISTS pgmigration;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS salutation;
+END;
