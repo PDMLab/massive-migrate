@@ -22,7 +22,7 @@
   "homepage": "https://github.com/PDMLab/massive-migrate#readme",
   "dependencies": {
     "async": "^1.4.2",
-    "massive": "2.0.5",
+    "massive": "2.0.9",
     "temp": "^0.8.3",
     "underscore": "^1.8.3"
   },
