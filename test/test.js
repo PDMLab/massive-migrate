@@ -110,6 +110,37 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
             });
         });
     })
+
+    it('should return an error if migration is executed twice', function (done) {
+        var migration = new Migration(conn, __dirname + '/migrations/stepbystep', '0.1.0', function () {
+            migration.up('0.1.0-up', function (err) {
+                should.not.exist(err);
+                massive.connect({connectionString: conn}, function (dbErr, db) {
+                    var exists = _.any(db.tables, function (table) {
+                        return table.name === "pgmigration"
+                    });
+                    exists.should.be.true;
+                    var migration2 = new Migration(conn, __dirname + '/migrations/stepbystep', '0.2.0', function () {
+                        migration2.up('0.2.0-up', function (err) {
+                            should.not.exist(err);
+                            massive.connect({connectionString: conn}, function (dbErr, db) {
+                                db.pgmigration.findOne({ version: '0.2.0'}, function(err, result) {
+                                    result.should.not.be.null;
+                                    var migration2double = new Migration(conn, __dirname + '/migrations/stepbystep', '0.2.0', function () {
+                                        migration2double.up('0.2.0-up', function (err) {
+                                            should.exist(err);
+                                            err.should.equal('Migration has been applied already');
+                                            done();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    })
 });
 
 function removeTables(callback) {

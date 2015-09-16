@@ -39,27 +39,33 @@ var Migration = function (conn, migrationsDirectory, version, done) {
                 }, function (err) {
                     if (!err) {
                         massive.connect({connectionString: conn, scripts: tempDir}, function (err, db) {
-                            var upscript = require(migrationsDirectory + '/' + version + '/' + script);
-                            upscript.up(db, function (err) {
-                                if (!err) {
-                                    db.pgmigration.insert({
-                                        version: version,
-                                        scriptname: script
-                                    }, function (err) {
+                            db.pgmigration.findOne({ version: version, scriptname: script}, function(err, result) {
+                                if(result) {
+                                    callback('Migration has been applied already')
+                                } else {
+                                    var upscript = require(migrationsDirectory + '/' + version + '/' + script);
+                                    upscript.up(db, function (err) {
                                         if (!err) {
-                                            temp.cleanup();
-                                            if(callback) {
-                                                callback()
-                                            }
-                                        } else {
-                                            if(callback) {
-                                                callback(err)
-                                            }
+                                            db.pgmigration.insert({
+                                                version: version,
+                                                scriptname: script
+                                            }, function (err) {
+                                                if (!err) {
+                                                    temp.cleanup();
+                                                    if(callback) {
+                                                        callback()
+                                                    }
+                                                } else {
+                                                    if(callback) {
+                                                        callback(err)
+                                                    }
+                                                }
+                                            })
                                         }
-                                    })
+                                    });
                                 }
-
                             });
+
                         })
                     }
                 });
