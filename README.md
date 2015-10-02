@@ -10,17 +10,20 @@ npm install massive-migrate --save
 
 ## Usage
 
-Once installed, you can use it by calling the `up` function of a `Migration` instance you've created before:
+Once installed, you can use it by calling the `runUpMigration` function of a `Migrations` instance you've created before:
 
 ```js
-var Migration = require("massive-migrate");
+var massiveMigrate = require("massive-migrate");
 var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
-var migrationsDirectory = __dirname + "/migrations";
-var version = '0.1.0';
-var migrationScript = '0.1.0-up';
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var name = '0.1.0';
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
 
-var migration = new Migration(conn, migrationsDirectory, version, function () {
-    migration.up(migrationScript, function(err) {
+massiveMigrate(options, function () {
+    migrations.runUpMigration({ name : name }, function(err) {
         if(!err) {
         	console.log('migration done');
         }
@@ -36,9 +39,9 @@ Assuming you want to do an `up`-migration to version `0.1.0`, you must have a fo
 └── app.js
 ```
 
-The parameter for the `up` function is the name of the `migrationScript` that defines the order of the operations to be done during the `0.1.0` `up` migration.
+The parameter for the `up` function is an options object containing at least the name of the migration that should be run. The order of the operations to be done during the `0.1.0` `up` migration is defined in a script whose name by convention is `name` of the migration + `up.js`. Thus for the up migration `0.1.0` it is `0.1.0-up.js`.
 
-The `migrationScript` has to reside below the `0.1.0` folder shown in the the tree above:
+The migration script has to reside below the `0.1.0` folder shown in the the tree above:
 
 ```
 ├── migrations
@@ -96,7 +99,7 @@ Both `.SQL` files have to be in the `up` folder below your `0.1.0` migration fol
 └── app.js
 ```
 
-The final piece for our migration is the implementation of the `migrationScript` named `0.1.0-up.js` which gets hooked up for the migration by Massive-Migrate:
+The final piece for our migration is the implementation of the migration script named `0.1.0-up.js` which gets hooked up for the migration by Massive-Migrate:
 
 ```js
 var async = require('async');
@@ -142,9 +145,79 @@ Your database now contains the two tables as well as a table `pgmigrations`:
 
 
 ```
-│    id    │  version  │  scriptname  │  dateapplied  │
+│    id    │   name    │  scriptname  │  dateapplied  │
 ├──────────┼───────────┼──────────────┼───────────────┤
 │  <guid>  │   0.1.0   │   0.1.0-up   │    <date>     │
+```
+
+## Running a series of migrations
+If you want to run more than one migration, you can just follow the convention and provide multiple migrations, each having their folder containing the `.SQL` files and their up script.
+
+Then you can run them in a series like this:
+
+```js
+var massiveMigrate = require("massive-migrate");
+var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
+
+massiveMigrate(options, function () {
+    migrations.runUpMigration({ name : '0.1.0' }, function(err) {
+        if(!err) {
+          migrations.runUpMigration({ name : '0.2.0' }, function(err) {
+        	  console.log('migration done');
+        	}
+        }
+    });
+});
+```
+
+## Does a migration already exist? 
+If you want to know if a migration has been applied already, you can ask the migrations:
+
+```js
+var massiveMigrate = require("massive-migrate");
+var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var name = '0.1.0';
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
+
+massiveMigrate(options, function () {
+    migrations.hasUpMigration(name, function(err, result) {
+        if(!err) {
+        	console.log('migration exists', result); // true or false
+        }
+    });
+});
+```
+
+If you're trying to run a migration that has been already applied, you'll get receive an error:
+
+`'Migration has been applied already'`
+
+For more details, please take a look at the tests.
+
+## Running the tests
+You can choose two variants to run the tests: against a local Postgres installation or using Postgres in a Docker container.
+
+Without Docker, create a local Postgres database named `postgres` with username and password `postgres`, listening on `localhost:5432`.
+
+Then, run the tests:
+```bash
+npm test
+```
+
+If you want to use Docker with no local Postgres installation required, run your tests like this:
+
+```
+npm run dockerpostgres
+npm test
 ```
 
 ## Want to help?
