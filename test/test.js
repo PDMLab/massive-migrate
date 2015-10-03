@@ -104,9 +104,11 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
 
                     migrations.runUpMigration({name: '0.2.0'}, function (err) {
                         should.not.exist(err);
-                        massive.connect({connectionString: conn}, function (dbErr, db) {
-                            db.pgmigration.findOne({name: '0.2.0'}, function (err, result) {
-                                should.exist(result);
+                        migrations.hasUpMigration('0.2.0', function(err, hasMigration) {
+                            hasMigration.should.equal(true);
+
+                            migrations.getAppliedMigrations(function(err, appliedMigrations) {
+                                appliedMigrations.length.should.equal(2);
                                 done();
                             });
                         });
@@ -130,8 +132,8 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
                     migrations.runUpMigration({name: '0.2.0'}, function (err) {
                         should.not.exist(err);
                         massive.connect({connectionString: conn}, function (dbErr, db) {
-                            db.pgmigration.findOne({name: '0.2.0'}, function (err, result) {
-                                should.exist(result);
+                            migrations.hasUpMigration('0.2.0', function(err, hasMigration) {
+                                hasMigration.should.equal(true);
 
                                 migrations.runUpMigration({name: '0.2.0'}, function (err) {
                                     should.exist(err);

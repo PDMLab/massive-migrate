@@ -203,6 +203,27 @@ If you're trying to run a migration that has been already applied, you'll get re
 
 For more details, please take a look at the tests.
 
+## Get all applied migrations
+If you need details (`id`, `name`, `scriptname` and `dateapplied`) about all applied migrations, just call the `getAppliedMigrations` function:
+
+```js
+var massiveMigrate = require("massive-migrate");
+var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
+
+massiveMigrate(options, function () {
+    migrations.getAppliedMigrations(function(err, appliedMigrations) {
+        if(!err) {
+        	console.log(appliedMigrations);
+        }
+    });
+});
+```
+
 ## Running the tests
 You can choose two variants to run the tests: against a local Postgres installation or using Postgres in a Docker container.
 
