@@ -1,6 +1,6 @@
 var async = require('async');
 
-exports.up = function(db, callback) {
+exports.up = function(db, options, callback) {
     async.parallel([
         function(cb) {
             db.createcustomertable(function(err, result) {

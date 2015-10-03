@@ -6,7 +6,7 @@ var massive = require('massive');
 var _ = require('underscore');
 
 
-describe.only('when migrating from an empty database to first version', function () {
+describe('when migrating from an empty database to first version', function () {
 
     beforeEach(removeTables);
 
