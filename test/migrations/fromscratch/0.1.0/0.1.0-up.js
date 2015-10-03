@@ -1,6 +1,6 @@
 var async = require('async');
 
-exports.up = function(db, callback) {
+exports.up = function(db, options, callback) {
     async.parallel([
         function(cb) {
             db.createsalutationtable(function(err, result){
@@ -15,12 +15,20 @@ exports.up = function(db, callback) {
             db.createcustomertable(function(err, result) {
                 if(err) {
                     console.log('up error while creating customer table: ', err)
+                    cb();
                 }
-                cb()
+                else {
+                    if(options.seedTestData) {
+                        db.seedcustomertestdata(function(err) {
+                            cb();
+                        })
+                    } else {
+                        cb();
+                    }
+                }
             })
         }
     ], function(err, result) {
         callback(err)
     })
-
 };

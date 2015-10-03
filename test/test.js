@@ -6,7 +6,7 @@ var massive = require('massive');
 var _ = require('underscore');
 
 
-describe('when migrating from an empty database to first version', function () {
+describe.only('when migrating from an empty database to first version', function () {
 
     beforeEach(removeTables);
 
@@ -53,6 +53,22 @@ describe('when migrating from an empty database to first version', function () {
                     });
                     exists.should.equal(true);
                     done();
+                });
+            });
+        });
+    });
+
+    it('should pass options user defined options for particular migration to up script', function (done) {
+        var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')}
+        massiveMigrate(options, function (err, migrations) {
+            migrations.runUpMigration({name: '0.1.0', seedTestData: true}, function (err) {
+                should.not.exist(err);
+                massive.connect({connectionString: conn}, function (dbErr, db) {
+                    db.customer.findOne({companyname1: 'PDMLab e.K.'}, function (err, result) {
+                        should.exist(result);
+                        done();
+                    });
+
                 });
             });
         });
@@ -104,10 +120,10 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
 
                     migrations.runUpMigration({name: '0.2.0'}, function (err) {
                         should.not.exist(err);
-                        migrations.hasUpMigration('0.2.0', function(err, hasMigration) {
+                        migrations.hasUpMigration('0.2.0', function (err, hasMigration) {
                             hasMigration.should.equal(true);
 
-                            migrations.getAppliedMigrations(function(err, appliedMigrations) {
+                            migrations.getAppliedMigrations(function (err, appliedMigrations) {
                                 appliedMigrations.length.should.equal(2);
                                 done();
                             });
@@ -132,7 +148,7 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
                     migrations.runUpMigration({name: '0.2.0'}, function (err) {
                         should.not.exist(err);
                         massive.connect({connectionString: conn}, function (dbErr, db) {
-                            migrations.hasUpMigration('0.2.0', function(err, hasMigration) {
+                            migrations.hasUpMigration('0.2.0', function (err, hasMigration) {
                                 hasMigration.should.equal(true);
 
                                 migrations.runUpMigration({name: '0.2.0'}, function (err) {

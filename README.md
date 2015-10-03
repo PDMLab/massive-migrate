@@ -104,7 +104,7 @@ The final piece for our migration is the implementation of the migration script 
 ```js
 var async = require('async');
 
-exports.up = function(db, callback) {
+exports.up = function(db, options, callback) {
     async.parallel([
         function(cb) {
             db.createsalutationtable(function(err, result){
@@ -173,6 +173,68 @@ massiveMigrate(options, function () {
         }
     });
 });
+```
+
+## Passing custom params to the up script
+If you want to pass custom params to the up script when calling the `runUpMigration` function, you can do so.
+
+Just apply your custom params to the options object like shown with the `seedTestData` param:
+
+```js
+var massiveMigrate = require("massive-migrate");
+var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var name = '0.1.0';
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
+
+massiveMigrate(options, function () {
+    migrations.runUpMigration({ name : name, seedTestData : true }, function(err) {
+        if(!err) {
+        	console.log('migration done');
+        }
+    });
+});
+```
+
+In your `up`-script you can simply access the `seedTestData` param via the `options` param being passed in to the `up` function:
+
+
+```js
+exports.up = function(db, options, callback) {
+    async.parallel([
+        function(cb) {
+            db.createsalutationtable(function(err, result){
+                if(err) {
+                    console.log('up error while creating salutation table: ', err)
+                }
+                cb()
+            });
+
+        },
+        function(cb) {
+            db.createcustomertable(function(err, result) {
+                if(err) {
+                    console.log('up error while creating customer table: ', err)
+                    cb();
+                }
+                else {
+                    if(options.seedTestData) {
+                        db.seedcustomertestdata(function(err) {
+                            cb();
+                        })
+                    } else {
+                        cb();
+                    }
+                }
+            })
+        }
+    ], function(err, result) {
+        callback(err)
+    })
+};
 ```
 
 ## Does a migration already exist? 
