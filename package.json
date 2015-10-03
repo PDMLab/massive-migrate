@@ -1,6 +1,6 @@
 {
   "name": "massive-migrate",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Postgres migrations based on massive-js",
   "main": "index.js",
   "scripts": {
