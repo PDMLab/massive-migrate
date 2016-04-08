@@ -22,7 +22,11 @@ var options =  {
 	directory : migrationsDirectory
 }
 
-massiveMigrate(options, function () {
+massiveMigrate(options, function (err, migrations) {
+    if (err) { 
+        return console.log('migration error', err)
+    }
+    
     migrations.runUpMigration({ name : name }, function(err) {
         if(!err) {
         	console.log('migration done');
