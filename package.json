@@ -1,6 +1,6 @@
 {
   "name": "massive-migrate",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Postgres migrations based on massive-js",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,10 @@
     "migration"
   ],
   "author": "Alexander Zeitler <alexander.zeitler@pdmlab.com>",
+  "contributors": [
+    "Alexander Zeitler <alexander.zeitler@pdmlab.com>",
+    "Scott Rippee <scott@hypexr.org>"
+  ],
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
