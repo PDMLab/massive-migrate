@@ -8,11 +8,17 @@ var _ = require('underscore');
 
 describe('when migrating from an empty database to first version', function () {
 
-    beforeEach(removeTables);
+    beforeEach(function(done) {
+        removeTables(function(err) {
+            if (err) done(err);
+            done();
+        });
+    });
 
     it('should create pgmigration table', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')};
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -29,6 +35,7 @@ describe('when migrating from an empty database to first version', function () {
     it('should create customer table', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')};
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -45,6 +52,7 @@ describe('when migrating from an empty database to first version', function () {
     it('should create salutation table', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')}
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -61,6 +69,7 @@ describe('when migrating from an empty database to first version', function () {
     it('should pass options user defined options for particular migration to up script', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')}
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0', seedTestData: true}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -78,11 +87,17 @@ describe('when migrating from an empty database to first version', function () {
 
 describe('when migrating from version 0.1.0 to version 0.2.0', function () {
 
-    beforeEach(removeTables);
+    beforeEach(function(done) {
+        removeTables(function(err) {
+            if (err) done(err);
+            done();
+        });
+    });
 
     it('should run second migration', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'stepbystep')};
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -110,6 +125,7 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
     it('should insert second migration to pgmigration table', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'stepbystep')};
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -137,6 +153,7 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
     it('should return an error if migration is executed twice', function (done) {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'stepbystep')};
         massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
