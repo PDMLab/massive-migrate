@@ -10,7 +10,7 @@ describe('when migrating from an empty database to first version', function () {
 
     beforeEach(function(done) {
         removeTables(function(err) {
-            if (err) done(err);
+            if (err) return done(err);
             done();
         });
     });
@@ -19,6 +19,7 @@ describe('when migrating from an empty database to first version', function () {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')};
         massiveMigrate(options, function (err, migrations) {
             should.not.exist(err);
+            migrations.runUpMigration({name: '0.1.0'});
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
@@ -89,7 +90,7 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
 
     beforeEach(function(done) {
         removeTables(function(err) {
-            if (err) done(err);
+            if (err) return done(err);
             done();
         });
     });
@@ -167,6 +168,111 @@ describe('when migrating from version 0.1.0 to version 0.2.0', function () {
                         massive.connect({connectionString: conn}, function (dbErr, db) {
                             migrations.hasUpMigration('0.2.0', function (err, hasMigration) {
                                 hasMigration.should.equal(true);
+
+                                migrations.runUpMigration({name: '0.2.0'}, function (err) {
+                                    should.exist(err);
+                                    err.should.equal('Migration has been applied already');
+                                    done();
+                                });
+
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    })
+});
+
+
+describe('when there is 1 sql file per migration', function () {
+
+    beforeEach(function(done) {
+        removeTables(function(err) {
+            if (err) return done(err);
+            done();
+        });
+    });
+
+    it('should run both migrations', function (done) {
+        var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'onemigrationperfile')};
+        massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
+            migrations.runUpMigration({name: '0.1.0'}, function (err) {
+                should.not.exist(err);
+                massive.connect({connectionString: conn}, function (dbErr, db) {
+                    should.not.exist(dbErr);
+                    var exists = _.any(db.tables, function (table) {
+                        return table.name === "pgmigration"
+                    });
+                    exists.should.equal(true);
+
+                    migrations.runUpMigration({name: '0.2.0'}, function (err) {
+                        should.not.exist(err);
+                        massive.connect({connectionString: conn}, function (dbErr, db) {
+                            var exists2 = _.any(db.tables, function (table) {
+                                return table.name === "salutation"
+                            });
+                            exists2.should.equal(true);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it('should have both migrations in pgmigration table', function (done) {
+        var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'onemigrationperfile')};
+        massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
+            migrations.runUpMigration({name: '0.1.0'}, function (err) {
+                should.not.exist(err);
+                massive.connect({connectionString: conn}, function (dbErr, db) {
+                    should.not.exist(dbErr);
+                    var exists = _.any(db.tables, function (table) {
+                        return table.name === "pgmigration"
+                    });
+                    exists.should.equal(true);
+
+                    migrations.runUpMigration({name: '0.2.0'}, function (err) {
+                        should.not.exist(err);
+                        migrations.hasUpMigrationBeenApplied('0.2.0', function (err, hasMigrationBeenApplied) {
+                            should.not.exist(err);
+                            hasMigrationBeenApplied.should.equal(true);
+
+                            migrations.getAppliedMigrations(function (err, appliedMigrations) {
+                                should.not.exist(err);
+                                appliedMigrations.length.should.equal(2);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it('should return an error if migration is executed twice', function (done) {
+        var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'onemigrationperfile')};
+        massiveMigrate(options, function (err, migrations) {
+            should.not.exist(err);
+            migrations.runUpMigration({name: '0.1.0'}, function (err) {
+                should.not.exist(err);
+                massive.connect({connectionString: conn}, function (dbErr, db) {
+                    should.not.exist(dbErr);
+                    var exists = _.any(db.tables, function (table) {
+                        return table.name === "pgmigration"
+                    });
+                    exists.should.equal(true);
+
+                    migrations.runUpMigration({name: '0.2.0'}, function (err) {
+                        should.not.exist(err);
+                        massive.connect({connectionString: conn}, function (dbErr, db) {
+                            should.not.exist(dbErr);
+                            migrations.hasUpMigrationBeenApplied('0.2.0', function (err, hasMigrationBeenApplied) {
+                                should.not.exist(err);
+                                hasMigrationBeenApplied.should.equal(true);
 
                                 migrations.runUpMigration({name: '0.2.0'}, function (err) {
                                     should.exist(err);
