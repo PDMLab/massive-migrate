@@ -292,14 +292,10 @@ describe('when there is 1 sql file per migration', function () {
 function removeTables(callback) {
     var massive = require('massive');
     massive.connect({connectionString: conn, scripts: __dirname + '/db'}, function (err, db) {
-        if (!err) {
-            db.droptables(function (err) {
-                if (!err) {
-                    callback()
-                } else {
-                    callback(err)
-                }
-            })
-        }
-    })
+        if (err) return callback(err);
+
+        db.droptables(function (err) {
+            callback(err);
+        });
+    });
 }
