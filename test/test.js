@@ -19,7 +19,6 @@ describe('when migrating from an empty database to first version', function () {
         var options = {connectionString: conn, directory: path.join(__dirname, 'migrations', 'fromscratch')};
         massiveMigrate(options, function (err, migrations) {
             should.not.exist(err);
-            migrations.runUpMigration({name: '0.1.0'});
             migrations.runUpMigration({name: '0.1.0'}, function (err) {
                 should.not.exist(err);
                 massive.connect({connectionString: conn}, function (dbErr, db) {
