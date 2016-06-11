@@ -7,13 +7,13 @@ var libDir = path.join(__dirname, 'lib', 'db');
 var massiveMigrate = function(options, callback) {
 
     massive.connect({connectionString: options.connectionString, scripts: libDir}, function (err, db) {
-        if (err) callback(err, null);
+        if (err) return callback(err, null);
 
         ensureMigrationTableExists(db, function(err) {
-            if (err) callback(err, null);
+            if (err) return callback(err, null);
 
             massive.connect(db, function (err, db) {
-                if (err) callback(err, null);
+                if (err) return callback(err, null);
 
                 var migrationsOptions = options;
                 migrationsOptions.database = db;
