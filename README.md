@@ -35,7 +35,51 @@ massiveMigrate(options, function (err, migrations) {
 });
 ```
 
-Assuming you want to do an `up`-migration to version `0.1.0`, you must have a folder `0.1.0` in your `migrationsDirectory`.
+Simple migrations can be a single file (like `0.1.0`-up.sql).  For situations where additional coding logic for each migration or multiple SQL migrations per `version` are required a directory can be created to hold up migrations and a `<name>-up.js` migration script.
+
+#### Simple Migrations
+
+The simple migration directory layout for your `migrationsDirectory` will be like:
+
+```
+├── migrations
+│    └── 0.1.0-up.sql
+│    └── 0.2.0-up.sql
+└── app.js
+```
+
+The migration file's name can be whatever you like but must end in `-up.sql` and should contain standard postgres SQL.  An example app.js to run these migrations could look like:
+
+```js
+var massiveMigrate = require("massive-migrate");
+var conn = "postgresql://postgres:postgres@localhost:5432/postgres";
+var migrationsDirectory = path.join(__dirname,'/migrations');
+var options =  {
+	connectionString : conn,
+	directory : migrationsDirectory
+}
+
+massiveMigrate(options, function () {
+    migrations.runUpMigration({ name : '0.1.0' }, function(err) {
+        if(err) {
+            console.log("Error running migration", err);
+            return;
+        }
+        migrations.runUpMigration({ name : '0.2.0' }, function(err) {
+            if(err) {
+                console.log("Error running migration", err);
+                return;
+            }
+            console.log('Migrations successfully applied!');
+        }
+    });
+});
+```
+
+
+#### Advanced Migrations
+
+For the second case where you want more control over the migrations or additional migration files per `version` you'll create a directory to hold the SQL migration files and a script to execute them.  For example, if want to do an `up`-migration to version `0.1.0`, you must have a directory `0.1.0` in your `migrationsDirectory`.
 
 ```
 ├── migrations
@@ -282,9 +326,17 @@ var options =  {
 }
 
 massiveMigrate(options, function () {
-    migrations.getAppliedMigrations(function(err, appliedMigrations) {
-        if(!err) {
-        	console.log(appliedMigrations);
+    migrations.runUpMigration({ name : '0.1.0' }, function(err) {
+        if(err) {
+            console.log("Error running migration", err);
+            return;
+        }
+        migrations.runUpMigration({ name : '0.2.0' }, function(err) {
+            if(err) {
+                console.log("Error running migration", err);
+                return;
+            }
+            console.log('Migrations successfully applied!');
         }
     });
 });
